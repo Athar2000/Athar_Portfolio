@@ -1,12 +1,18 @@
-var canvas = document.querySelector("#wrapper-canvas");
+{/* <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.12.0/matter.min.js"></script>
+<script src="https://cdn/jsdelivr.net/npm/matter-wrap@0.2.0/build/matter-wrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/matter-attractors@0.1.6/build/matter-attractors.min.js"></script>
+ */}
+
+var canvas = $('#wrapper-canvas').get(0)
 
 var dimensions = {
-  width: window.innerWidth,
-  height: window.innerHeight,
-};
+  width: $(window).width(),
+  height: $(window).height(),
+}
 
-Matter.use("matter-attractors");
-Matter.use("matter-wrap");
+Matter.use('matter-attractors')
+Matter.use('matter-wrap')
 
 function runMatter() {
   // module aliases
@@ -20,14 +26,14 @@ function runMatter() {
     Common = Matter.Common,
     Composite = Matter.Composite,
     Composites = Matter.Composites,
-    Bodies = Matter.Bodies;
+    Bodies = Matter.Bodies
 
   // create engine
-  var engine = Engine.create();
+  var engine = Engine.create()
 
-  engine.world.gravity.y = 0;
-  engine.world.gravity.x = 0;
-  engine.world.gravity.scale = 0.1;
+  engine.world.gravity.y = 0
+  engine.world.gravity.x = 0
+  engine.world.gravity.scale = 0.1
 
   // create renderer
   var render = Render.create({
@@ -38,19 +44,19 @@ function runMatter() {
       width: dimensions.width,
       height: dimensions.height,
       wireframes: false,
-      background: "transparent",
+      background: 'transparent',
     },
-  });
+  })
 
   // create runner
-  var runner = Runner.create();
+  var runner = Runner.create()
 
   // Runner.run(runner, engine);
   // Render.run(render);
 
   // create demo scene
-  var world = engine.world;
-  world.gravity.scale = 0;
+  var world = engine.world
+  world.gravity.scale = 0
 
   // create a body with an attractor
   var attractiveBody = Bodies.circle(
@@ -71,22 +77,21 @@ function runMatter() {
             return {
               x: (bodyA.position.x - bodyB.position.x) * 1e-6,
               y: (bodyA.position.y - bodyB.position.y) * 1e-6,
-            };
+            }
           },
         ],
       },
     }
-  );
+  )
 
-  World.add(world, attractiveBody);
+  World.add(world, attractiveBody)
 
   // add some bodies that to be attracted
   for (var i = 0; i < 60; i += 1) {
-    let x = Common.random(0, render.options.width);
-    let y = Common.random(0, render.options.height);
-    let s =
-      Common.random() > 0.6 ? Common.random(10, 80) : Common.random(4, 60);
-    let poligonNumber = Common.random(3, 6);
+    let x = Common.random(0, render.options.width)
+    let y = Common.random(0, render.options.height)
+    let s = Common.random() > 0.6 ? Common.random(10, 80) : Common.random(4, 60)
+    let poligonNumber = Common.random(3, 6)
     var body = Bodies.polygon(
       x,
       y,
@@ -99,16 +104,16 @@ function runMatter() {
         frictionAir: 0.02,
         angle: Math.round(Math.random() * 360),
         render: {
-          fillStyle: "#222222",
+          fillStyle: '#222222',
           strokeStyle: `#000000`,
           lineWidth: 2,
         },
       }
-    );
+    )
 
-    World.add(world, body);
+    World.add(world, body)
 
-    let r = Common.random(0, 1);
+    let r = Common.random(0, 1)
     var circle = Bodies.circle(x, y, Common.random(2, 8), {
       mass: 0.1,
       friction: 0,
@@ -118,9 +123,9 @@ function runMatter() {
         strokeStyle: `#000000`,
         lineWidth: 2,
       },
-    });
+    })
 
-    World.add(world, circle);
+    World.add(world, circle)
 
     var circle = Bodies.circle(x, y, Common.random(2, 20), {
       mass: 6,
@@ -131,9 +136,9 @@ function runMatter() {
         strokeStyle: `#111111`,
         lineWidth: 4,
       },
-    });
+    })
 
-    World.add(world, circle);
+    World.add(world, circle)
 
     var circle = Bodies.circle(x, y, Common.random(2, 30), {
       mass: 0.2,
@@ -144,22 +149,22 @@ function runMatter() {
         strokeStyle: `#111111`,
         lineWidth: 3,
       },
-    });
+    })
 
-    World.add(world, circle);
+    World.add(world, circle)
   }
 
   // add mouse control
-  var mouse = Mouse.create(render.canvas);
+  var mouse = Mouse.create(render.canvas)
 
-  Events.on(engine, "afterUpdate", function () {
-    if (!mouse.position.x) return;
+  Events.on(engine, 'afterUpdate', function () {
+    if (!mouse.position.x) return
     // smoothly move the attractor body towards the mouse
     Body.translate(attractiveBody, {
       x: (mouse.position.x - attractiveBody.position.x) * 0.12,
       y: (mouse.position.y - attractiveBody.position.y) * 0.12,
-    });
-  });
+    })
+  })
 
   // return a context for MatterDemo to control
   let data = {
@@ -168,46 +173,48 @@ function runMatter() {
     render: render,
     canvas: render.canvas,
     stop: function () {
-      Matter.Render.stop(render);
-      Matter.Runner.stop(runner);
+      Matter.Render.stop(render)
+      Matter.Runner.stop(runner)
     },
     play: function () {
-      Matter.Runner.run(runner, engine);
-      Matter.Render.run(render);
+      Matter.Runner.run(runner, engine)
+      Matter.Render.run(render)
     },
-  };
+  }
 
-  Matter.Runner.run(runner, engine);
-  Matter.Render.run(render);
-  return data;
+  Matter.Runner.run(runner, engine)
+  Matter.Render.run(render)
+  return data
 }
 
 function debounce(func, wait, immediate) {
-  var timeout;
+  var timeout
   return function () {
     var context = this,
-      args = arguments;
+      args = arguments
     var later = function () {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
+      timeout = null
+      if (!immediate) func.apply(context, args)
+    }
+    var callNow = immediate && !timeout
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
+    if (callNow) func.apply(context, args)
+  }
 }
 
 function setWindowSize() {
-  let dimensions = {};
-  dimensions.width = $(window).width();
-  dimensions.height = $(window).height();
+  let dimensions = {}
+  dimensions.width = $(window).width()
+  dimensions.height = $(window).height()
 
-  m.render.canvas.width = $(window).width();
-  m.render.canvas.height = $(window).height();
-  return dimensions;
+  m.render.canvas.width = $(window).width()
+  m.render.canvas.height = $(window).height()
+  return dimensions
 }
 
-let m = runMatter();
-setWindowSize();
-$(window).resize(debounce(setWindowSize, 250));
+let m = runMatter()
+setWindowSize()
+$(window).resize(debounce(setWindowSize, 250))
+
+
